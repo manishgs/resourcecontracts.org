@@ -1,11 +1,11 @@
 <?php
 return [
-    "￼Vintage Petroleum Boliviana LTD"                                                          => "￼Vintage
-    Petroleum Boliviana LTD",
+    "Vintage Petroleum Boliviana LTD"                                                           => "Vintage Petroleum Boliviana LTD",
     "4M Energy S.A."                                                                            => "4M Energy S.A.",
     "A&T Petroleum Company Ltd"                                                                 => "A&T Petroleum Company Ltd",
     "A&T Petroleum Company, Ltd"                                                                => "A&T Petroleum Company Ltd",
     "A&T Petroleum Company, Ltd."                                                               => "A&T Petroleum Company Ltd",
+    "A&T Petroleum Company Ltd."                                                                => "A&T Petroleum Company Ltd",
     "Abacan Resource Corp."                                                                     => "Abacan Resource Corp.",
     "Abacan Resource LTD (Benin)"                                                               => "Abacan Resource LTD (Benin)",
     "ADA Commercial Inc."                                                                       => "ADA Commercial Inc.",
@@ -1128,7 +1128,7 @@ return [
     "VEGSA C.G."                                                                                => "VEGSA C.G.",
     "Vena Peru S.A.C."                                                                          => "Vena Peru S.A.C.",
     "Verdanta Harvests PLC"                                                                     => "Verdanta Harvests PLC",
-    "VERDE  RESOURCES S.A.C."                                                                   => "VERDE  RESOURCES S.A.C.",
+    "VERDE  RESOURCES S.A.C."                                                                   => "VERDE RESOURCES S.A.C.",
     "Verde Resources, S.A.C."                                                                   => "Verde Resources, S.A.C.",
     "Verenex Energy Area 47 Libya Limited"                                                      => "Verenex Energy Area 47 Libya Limited",
     "Vetra Peru S.A.C."                                                                         => "Vetra Peru S.A.C.",

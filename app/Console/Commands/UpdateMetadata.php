@@ -96,6 +96,8 @@ class UpdateMetadata extends Command
      */
     protected function applyRules(array $metadata)
     {
+        $this->harmonizeCompanyName($metadata);
+
         return $metadata;
     }
 
@@ -437,5 +439,26 @@ class UpdateMetadata extends Command
             }
         }
 
+    }
+
+
+    /**
+     * Harmonize company name
+     * @param $metadata
+     */
+    public function harmonizeCompanyName(&$metadata)
+    {
+        $companyList = $new = config('company_name');
+        foreach ($metadata['company'] as $index => $company) {
+            $oldName = $company->name;
+            if (isset($companyList[$oldName])) {
+                $newName = $companyList[$oldName];
+                if ($oldName != $newName) {
+                    $metadata['company'][$index]->name = $newName;
+                    $this->info(sprintf('Company name changed from %s to %s : UPDATED', $oldName, $newName));
+                }
+
+            }
+        }
     }
 }

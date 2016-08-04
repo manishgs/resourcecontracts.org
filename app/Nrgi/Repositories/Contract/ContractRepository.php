@@ -845,9 +845,12 @@ class ContractRepository implements ContractRepositoryInterface
      *
      * @return array
      */
-    public function getAllCompanyNames()
+    public function getAllCompanyNames($contractId='')
     {
         $query = $this->contract->selectRaw("id,company->>'name' as company_name");
+        if (!empty($contractId)) {
+            $query->where('id', '=', $contractId);
+        }
         $from  = "contracts, json_array_elements(metadata->'company') as company";
 
         return $query->from($this->db->raw($from))
