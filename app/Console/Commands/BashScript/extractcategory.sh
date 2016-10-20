@@ -5,7 +5,7 @@ mkdir $5/$9
 mkdir $5/${10}
 mkdir $5/$7
 IFS=$'\n'
-for con in $(echo "$(psql -X -d $4 -U $3 -h $1 -p $2 -t -c "SELECT id,metadata->>'open_contracting_id' from contracts limit 10")"|xargs -n3)
+for con in $(echo "$(psql -X -d $4 -U $3 -h $1 -p $2 -t -c "SELECT id,metadata->>'open_contracting_id' from contracts where metadata->'category'->>0='${11}' limit 10")"|xargs -n3)
   do
     contractid=$(echo $con|awk '{print $1}')
     ocid=$(echo $con|awk '{print $3}')
@@ -17,8 +17,3 @@ mv $5/$8'.zip' $5/$7/
 size=$(wc -c $5/$7/$8'.zip' |awk '{print $1}')
 filename=$8-${size}'.zip'
 mv $5/$7/${8}'.zip' $5/$7/${filename}
-
-
-
-
-
