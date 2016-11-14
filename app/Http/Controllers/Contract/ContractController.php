@@ -12,6 +12,7 @@ use App\Nrgi\Services\Contract\ContractFilterService;
 use App\Nrgi\Services\Contract\ContractService;
 use App\Nrgi\Services\Contract\CountryService;
 use App\Nrgi\Services\Contract\Discussion\DiscussionService;
+use App\Nrgi\Services\Language\LanguageService;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,6 +24,10 @@ use Illuminate\Http\Response;
  */
 class ContractController extends Controller
 {
+    /**
+     * @var ActivityService
+     */
+    protected $activity;
     /**
      * @var ContractService
      */
@@ -43,10 +48,6 @@ class ContractController extends Controller
      * @var AnnotationService
      */
     protected $annotation;
-    /**
-     * @var ActivityService
-     */
-    public $activity;
 
     /**
      * @param ContractService       $contract
@@ -148,10 +149,12 @@ class ContractController extends Controller
      *
      * @param                   $id
      * @param DiscussionService $discussion
+     * @param LanguageService   $lang
+     * @param Request           $request
      *
      * @return Response
      */
-    public function show($id, DiscussionService $discussion)
+    public function show($id, DiscussionService $discussion, LanguageService $lang, Request $request)
     {
         $contract = $this->contract->findWithAnnotations($id, $withRelation = true);
 
@@ -171,6 +174,15 @@ class ContractController extends Controller
         $discussion_status            = $discussion->getResolved($id);
         $elementState                 = $this->activity->getElementState($id);
 
+        $locale = $request->route()->getParameter('lang');
+
+        if (!is_null($locale)) {
+            if (!$lang->isValidTranslationLang($locale) || $locale == $lang->defaultLang()) {
+                abort(404);
+            }
+            $contract->setLang($locale);
+        }
+
         return view(
             'contract.show',
             compact(
@@ -182,7 +194,8 @@ class ContractController extends Controller
                 'discussions',
                 'discussion_status',
                 'publishedInformation',
-                'elementState'
+                'elementState',
+                'locale'
             )
         );
     }
@@ -193,9 +206,12 @@ class ContractController extends Controller
      * @param                   $id
      * @param DiscussionService $discussion
      *
+     * @param LanguageService   $lang
+     * @param Request           $request
+     *
      * @return Response
      */
-    public function edit($id, DiscussionService $discussion)
+    public function edit($id, DiscussionService $discussion, LanguageService $lang, Request $request)
     {
         $contract           = $this->contract->find($id);
         $country            = $this->countries->all();
@@ -205,9 +221,19 @@ class ContractController extends Controller
         $discussions       = $discussion->getCount($id);
         $discussion_status = $discussion->getResolved($id);
         $companyName       = $this->contract->getCompanyNames();
+        $view              = 'contract.edit';
+        $code              = $request->route()->getParameter('lang');
+
+        if (!is_null($code)) {
+            if (!$lang->isValidTranslationLang($code) || $code == $lang->defaultLang()) {
+                abort(404);
+            }
+            $contract->setLang($code);
+            $view = 'contract.edit_trans';
+        }
 
         return view(
-            'contract.edit',
+            $view,
             compact(
                 'contract',
                 'country',
@@ -407,7 +433,7 @@ class ContractController extends Controller
             }
         }
 
-        $this->annotation->updateStatus("published",'', $contract_id);
+        $this->annotation->updateStatus("published", '', $contract_id);
 
         return back()->withSuccess(trans('contract.status_update'));
     }
@@ -420,14 +446,14 @@ class ContractController extends Controller
      *
      * @return Response
      */
-    public function unpublish($contract_id, Guard $auth,Request $request)
+    public function unpublish($contract_id, Guard $auth, Request $request)
     {
-        $elementStatus=$request->all();
+        $elementStatus = $request->all();
         if ($auth->user()->isCountryResearch()) {
             return back()->withError(trans('contract.permission_denied'));
         }
 
-        if ($this->contract->unPublishContract($contract_id,$elementStatus)) {
+        if ($this->contract->unPublishContract($contract_id, $elementStatus)) {
             //$this->annotation->updateStatus("draft",'', $contract_id);
 
             return back()->withSuccess(trans('contract.unpublish.success'));

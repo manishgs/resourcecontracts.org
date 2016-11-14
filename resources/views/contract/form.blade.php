@@ -48,7 +48,7 @@ if (!empty($contract->metadata->government_entity)) {
     </div>
 @endif
 
-@if($action == 'edit')
+@if($action == 'edit' && !isset($edit_trans))
     <div id="new-document" style="display: none" class="form-group">
         <label for="Select PDF" class="col-sm-2 control-label">@lang('contract.contract_file')</label>
 

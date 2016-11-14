@@ -105,16 +105,29 @@ class ElasticSearchService
         $metadataAttr                    = $contract->metadata;
         $parent                          = $this->contract->getcontracts((int) $contract->getParentContract());
 
-        $metadataAttr->translated_from = $parent;
-        $metadataAttr->show_pdf_text   = 0;
         if ($elementState['text'] == 'published') {
             $showText                    = true;
-            $metadataAttr->show_pdf_text = 1;
         }
+
         $contract->metadata = $metadataAttr;
+        $trans =  [];
+        $trans['en'] = $metadataAttr;
+        $trans['en']->translated_from = $parent;
+        $trans['en']->show_pdf_text   = (int) $showText;
+
+        $contract->setLang('fr');
+
+        $trans['fr'] = $contract->metadata;
+        $trans['fr']->translated_from = $parent;
+        $trans['fr']->show_pdf_text   = (int) $showText;
+
+        $contract->setLang('ar');
+        $trans['ar'] = $contract->metadata;
+        $trans['ar']->translated_from = $parent;
+        $trans['ar']->show_pdf_text   = (int) $showText;
         $metadata           = [
             'id'                   => $contract->id,
-            'metadata'             => collect($contract->metadata)->toJson(),
+            'metadata'             => json_encode($trans),
             'total_pages'          => $contract->pages->count(),
             'created_by'           => json_encode(
                 [

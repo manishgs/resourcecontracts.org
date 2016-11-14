@@ -113,7 +113,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                 </ul>
             </div>
 
-        {{--<div class="contract-info">--}}
+            @include('contract.partials.form.language', ['view' => 'show'] )
 
             <div class="contract-wrapper block">
             <ul>
@@ -140,7 +140,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                             <strong>@lang('contract.language'):</strong>
                         </span>
                          <span class="value">
-                             {{getLanguageName($contract->metadata->language)}}
+                            {{getLanguageName($contract->metadata->language, $locale)}}
                             [{{$contract->metadata->language}}]
                             {!! discussion($discussions,$discussion_status, $contract->id,'language','metadata') !!}
                         </span>
@@ -152,10 +152,10 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                         <span class="name">
                             <strong>@lang('contract.country'):</strong>
                         </span>
-                         <span class="value">{{_l('codelist/country.'.$contract->metadata->country->name)}}
+                         <span class="value">{{_l('codelist/country.'.$contract->metadata->country->name, $locale)}}
                             [{{$contract->metadata->country->code or ''}}]
                             @if(isset($contract->metadata->amla_url) && !empty($contract->metadata->amla_url))
-                                <a href="{{$contract->metadata->amla_url}}">@lang('contract.amla')</a>
+                                <a href="{{$contract->metadata->amla_url}}">{{trans('contract.amla',[],null,$locale)}}</a>
                             @endif
                             {!! discussion($discussions,$discussion_status, $contract->id,'country','metadata') !!}
                         </span>
@@ -166,8 +166,8 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                     <span class="name"> <strong>@lang('contract.resource'): </strong></span>
                      <span class="value">
                         @if(is_array($contract->metadata->resource) && count($contract->metadata->resource)>0)
-                                {{join(', ', array_map(function($v){return _l('codelist/resource.'.$v);},
-                                $contract->metadata->resource))}}
+                                {{join(', ', array_map(function($v)use($locale){return _l('codelist/resource.'.$v,
+                                $locale);},$contract->metadata->resource))}}
                         @endif
                         {!! discussion($discussions,$discussion_status, $contract->id,'resource','metadata') !!}
                     </span>
@@ -199,7 +199,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
 
                 <li class="name-value-wrap">
                     <span class="name"><strong>@lang('contract.document_type'):</strong></span>
-                    <span class="value">{{ _l('codelist/documentType.'.$contract->metadata->document_type) }}
+                    <span class="value">{{ _l('codelist/documentType.'.$contract->metadata->document_type, $locale) }}
                     {!! discussion($discussions,$discussion_status, $contract->id,'document_type','metadata') !!}
                     </span>
                 </li>
@@ -209,7 +209,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                     <strong>@lang('contract.type_of_contract'): </strong></span>
                      <span class="value">
                     @if(is_array($contract->metadata->type_of_contract) && count($contract->metadata->type_of_contract)>0)
-                        {{join(', ', array_map(function($v){return _l('codelist/contract_type.'.$v);},
+                        {{join(', ', array_map(function($v)use($locale){return _l('codelist/contract_type.'.$v, $locale);},
                        $contract->metadata->type_of_contract))}}
                     @endif
                     {!! discussion($discussions,$discussion_status, $contract->id,'type_of_contract','metadata') !!}
@@ -236,12 +236,12 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                     <span class="name"><strong>@lang('contract.is_contract_signed'):</strong></span>
                     @if(isset($contract->metadata->is_contract_signed) && $contract->metadata->is_contract_signed)
                         <span class="value">
-                            @lang('contract.yes')
+                            {{trans('contract.yes',[],null, $locale)}}
                             {!! discussion($discussions,$discussion_status, $contract->id,'is_contract_signed','metadata') !!}
                         </span>
                     @else
                         <span class="value">
-                            @lang('contract.no')
+                            {{trans('contract.no',[],null, $locale)}}
                             {!! discussion($discussions,$discussion_status, $contract->id,'is_contract_signed','metadata') !!}
                         </span>
                     @endif
@@ -279,7 +279,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                                         <li class="name-value-wrap">
                                             <span class="name"> <strong>@lang('contract.jurisdiction_of_incorporation'):</strong></span>
                                              <span class="value">
-                                            {{@trans('codelist/country')[$v->jurisdiction_of_incorporation]}}
+                                            {{@trans('codelist/country',[],null,$locale)[$v->jurisdiction_of_incorporation]}}
                                             {!! discussion($discussions,$discussion_status, $contract->id,'jurisdiction_of_incorporation-'.$k,'metadata') !!}
                                             </span>
                                         </li>
@@ -294,7 +294,6 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
 
                                         <li class="name-value-wrap">
                                             <span class="name"><strong>@lang('contract.incorporation_date'):</strong></span>
-
                                             <span class="value">
                                             {{$v->company_founding_date}}
                                             {!! discussion($discussions,$discussion_status, $contract->id,'company_founding_date-'.$k,'metadata') !!}
@@ -328,8 +327,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                                             <span class="name"> <strong>@lang('contract.open_corporate'):</strong></span>
 
                                              <span class="value">
-                                                 @if(!empty($v->open_corporate_id)) <a target="_blank"
-                                                                                                                                     href="{{$v->open_corporate_id}}">{{$v->open_corporate_id}}</a>@endif
+                                                 @if(!empty($v->open_corporate_id)) <a target="_blank"  href="{{$v->open_corporate_id}}">{{$v->open_corporate_id}}</a>@endif
                                             {!! discussion($discussions,$discussion_status, $contract->id,'open_corporate_id-'.$k,'metadata') !!}
                                             </span>
                                         </li>
@@ -337,7 +335,13 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                                             <li class="name-value-wrap">
                                                 <span class="name"> <strong>@lang('contract.operator'):</strong></span>
                                                 <span class="value">
-                                                @if($v->operator==1)@lang('global.yes') @elseif($v->operator==0) @lang('global.no') @elseif($v->operator==-1) @lang('global.not_available') @endif
+                                                @if($v->operator==1)
+														{{trans('global.yes',[],null, $locale)}}
+													@elseif($v->operator==0)
+														{{trans('global.no',[],null, $locale)}}
+													@elseif($v->operator==-1)
+														{{trans('global.not_available',[],null, $locale)}}
+													@endif
                                                 {!! discussion($discussions,$discussion_status, $contract->id,'operator-'.$k,'metadata') !!}
                                                 </span>
                                             </li>
@@ -536,7 +540,6 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
 
 
 
-        {{--</div>--}}
        @include('contract.partials.show.annotation_list')
     </div>
     </div>

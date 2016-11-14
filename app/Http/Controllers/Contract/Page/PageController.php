@@ -221,7 +221,6 @@ class PageController extends Controller
             $contract    = $this->contract->findWithPages($contractId);
             $pages       = $contract->pages;
         } catch (\Exception $e) {
-
             return abort(404);
         }
 
