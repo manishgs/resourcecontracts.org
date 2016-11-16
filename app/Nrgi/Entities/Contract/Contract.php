@@ -172,7 +172,7 @@ class Contract extends Model
             foreach ($metadata['company'] as $key => $company) {
                 $metadata['company'][$key] = array_replace_recursive(
                     (array) $metadata_en['company'][$key],
-                    (array) $company9
+                    (array) $company
                 );
             }
             $this->metadata = $metadata;

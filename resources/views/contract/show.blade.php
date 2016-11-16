@@ -161,7 +161,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
                         <span class="name">
                             <strong>@lang('contract.country'):</strong>
                         </span>
-                         <span class="value">{{_l('codelist/country.'.$contract->metadata->country->name, $locale)}}
+                         <span class="value">{{_l('codelist/country.'.$contract->metadata->country->code, $locale)}}
 							 [{{$contract->metadata->country->code or ''}}]
 							 @if(isset($contract->metadata->amla_url) && !empty($contract->metadata->amla_url))
 								 <a href="{{$contract->metadata->amla_url}}">{{trans('contract.amla',[],null,$locale)}}</a>
@@ -428,7 +428,7 @@ $contract_processing_pipline = \App\Nrgi\Entities\Contract\Contract::PROCESSING_
 						<li class="name-value-wrap">
 							<span class="name"> <strong>@lang('contract.disclosure_mode'):</strong></span>
                      <span class="value">
-                        {{_l('codelist/disclosure_mode.'.$contract->metadata->disclosure_mode) }}
+                        {{_l('codelist/disclosure_mode.'.$contract->metadata->disclosure_mode, $locale) }}
 						 {!! discussion($discussions,$discussion_status, $contract->id,'disclosure_mode','metadata') !!}
 						 @if(isset($contract->metadata->disclosure_mode_text) && !empty($contract->metadata->disclosure_mode_text))
 							 ( {{$contract->metadata->disclosure_mode_text}} )
