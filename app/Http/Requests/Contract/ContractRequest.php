@@ -22,22 +22,22 @@ class ContractRequest extends Request
     {
 
         $rules = [
-            'contract_name'       => 'required',
-            'country'             => 'required',
-            'signature_year'      => 'required|integer|digits:4',
-            'file'                => 'required|mimes:pdf|max:1048576',
-            'participation_share' => 'numeric|min:0|max:1',
-            'language'            => 'required',
-            'resource'            => 'required',
-            'category'            => 'required',
-            'document_type'       => 'required',
-            'signature_date'      => 'date',
-            'date_retrieval'      => 'date',
+            'contract_name'  => 'required',
+            'country'        => 'required',
+            'signature_year' => 'required|integer|digits:4',
+            'file'           => 'required|mimes:pdf|max:1048576',
+            'language'       => 'required',
+            'resource'       => 'required',
+            'category'       => 'required',
+            'document_type'  => 'required',
+            'signature_date' => 'date',
+            'date_retrieval' => 'date',
 
         ];
         foreach ($this->request->get('company') as $key => $val) {
             $rules['company.'.$key.'.name']                  = 'required';
             $rules['company.'.$key.'.company_founding_date'] = 'date';
+            $rules['company.'.$key.'.participation_share']   = 'numeric|min:0|max:1';
         }
 
         if ($this->request->get('document_type') == "Contract") {
@@ -46,12 +46,11 @@ class ContractRequest extends Request
 
         if ($this->isMethod('PATCH')) {
             unset($rules['file']);
-        }
-
-        $trans_code = $this->input('trans');
-        if ($lang->isValidTranslationLang($trans_code)) {
-            unset($rules['country'], $rules['signature_year'], $rules['language'], $rules['resource'], $rules['category'],
-                $rules['document_type']);
+            $trans_code = $this->input('trans');
+            if ($lang->isValidTranslationLang($trans_code)) {
+                unset($rules['country'], $rules['signature_year'], $rules['language'],
+                    $rules['resource'], $rules['category'], $rules['document_type']);
+            }
         }
 
         return $rules;
@@ -76,11 +75,13 @@ class ContractRequest extends Request
                 if ($this->input('company')) {
                     $companies = $this->input('company');
                     foreach ($companies as $company) {
-                        $this->validateDate(
-                            $company['company_founding_date'],
-                            $validator,
-                            trans('validation.valid_incorporation_date')
-                        );
+                        if (isset($company['company_founding_date'])) {
+                            $this->validateDate(
+                                $company['company_founding_date'],
+                                $validator,
+                                trans('validation.valid_incorporation_date')
+                            );
+                        }
                     }
                 }
                 if ($this->input('date_retrieval')) {

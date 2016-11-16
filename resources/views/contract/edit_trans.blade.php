@@ -28,15 +28,12 @@
 @stop
 
 @section('script2')
-
 	<script>
 		$(function () {
 			var arr = ['#contract_identifier', '#signature_date', '#signature_year', '#source_url', '#date_retrieval',
-				'.el_government_identifier', '#deal_number', '#matrix_page'];
-			$('select').prop('disabled', true);
-			$("input:checkbox").prop('disabled', true);
-			$("input:radio").prop('disabled', true);
-
+				'.el_government_identifier', '#deal_number', '#matrix_page', 'select', 'input:checkbox',
+				'input:radio', '.open_corporate_id', '.participation_share', '.company_founding_date',
+				'.company_number'];
 			$('.col-sm-7').click(function () {
 				var inp = $(this).find('input');
 				if (inp.length > 0 && inp.prop('disabled') == true) {
@@ -46,10 +43,13 @@
 
 			$('.add-new-btn').hide();
 			$.each(arr, function (index, value) {
+				$(value).parent().parent().css({
+					'background': '#EAEAEA',
+					'padding-top': '10px',
+					'padding-bottom': '10px'
+				});
 				$(value).prop('disabled', true);
 			});
 		});
 	</script>
-
-
 @stop

@@ -165,8 +165,41 @@ class Contract extends Model
     public function setLang($lang)
     {
         if (isset($this->metadata_trans->$lang)) {
-            $this->metadata = $this->metadata_trans->$lang;
+            $metadata_en    = json_decode($this->getOriginal('metadata'), true);
+            $metadata_trans = (array) $this->metadata_trans->$lang;
+            $metadata       = array_replace_recursive($metadata_en, $metadata_trans);
+
+            foreach ($metadata['company'] as $key => $company) {
+                $metadata['company'][$key] = array_replace_recursive(
+                    (array) $metadata_en['company'][$key],
+                    (array) $company9
+                );
+            }
+            $this->metadata = $metadata;
+        } else {
+            $this->metadata = json_decode($this->getOriginal('metadata'), true);
         }
+    }
+
+    /**
+     * Determine if metadata has the translation
+     *
+     * @param $locale
+     *
+     * @return bool
+     */
+    public function hasTranslation($locale)
+    {
+        if (config('lang.default') == $locale) {
+            return true;
+        }
+
+        $metadata = json_decode($this->getOriginal('metadata_trans'), true);
+        if (isset($metadata[$locale])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -335,7 +368,16 @@ class Contract extends Model
      */
     public function isEditableStatus($status)
     {
-        if (in_array($status, [static::STATUS_DRAFT, static::STATUS_COMPLETED, static::STATUS_PUBLISHED, static::STATUS_REJECTED,static::STATUS_UNPUBLISHED])) {
+        if (in_array(
+            $status,
+            [
+                static::STATUS_DRAFT,
+                static::STATUS_COMPLETED,
+                static::STATUS_PUBLISHED,
+                static::STATUS_REJECTED,
+                static::STATUS_UNPUBLISHED,
+            ]
+        )) {
             return true;
         }
 

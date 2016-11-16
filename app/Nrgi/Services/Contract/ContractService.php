@@ -348,11 +348,13 @@ class ContractService
             ]
         );
 
-        $contract = $this->contract->findContract($contractID);
-        $metadata = json_decode(json_encode($contract->metadata), true);
+        if (isset($formData['disclosure_mode'])) {
+            $data['disclosure_mode'] = $formData['disclosure_mode'];
+        }
 
+        $contract                           = $this->contract->findContract($contractID);
         $metadata_trans                     = json_decode(json_encode($contract->metadata_trans), true);
-        $metadata_trans[$formData['trans']] = array_replace_recursive($metadata, $data);
+        $metadata_trans[$formData['trans']] = $data;
         $contract->metadata_trans           = $metadata_trans;
         $contract->updated_by               = $this->auth->id();
         $contract->metadata_status          = Contract::STATUS_DRAFT;
@@ -1054,6 +1056,7 @@ class ContractService
             function ($v) use ($lang) {
                 $abb       = config('abbreviation_toc.'.$v);
                 $abb_trans = trans('codelist/contract_type.'.trim($abb), [], null, $lang);
+
                 return is_null($abb_trans) ? $abb : $abb_trans;
             },
             $tocs

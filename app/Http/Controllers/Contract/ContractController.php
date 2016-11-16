@@ -111,18 +111,20 @@ class ContractController extends Controller
     /**
      * Display contract create form.
      *
-     * @param Request $request
+     * @param Request         $request
+     * @param LanguageService $lang
      *
      * @return Response
      */
-    public function create(Request $request)
+    public function create(Request $request, LanguageService $lang)
     {
         $country     = $this->countries->all();
         $contracts   = $this->contract->parentContracts();
         $contract    = !is_null($request->get('parent')) ? $this->contract->find($request->get('parent')) : [];
         $companyName = $this->contract->getCompanyNames();
+        $locale      = $lang->defaultLang();
 
-        return view('contract.create', compact('country', 'contracts', 'contract', 'companyName'));
+        return view('contract.create', compact('country', 'contracts', 'contract', 'companyName', 'locale'));
     }
 
     /**
@@ -222,13 +224,13 @@ class ContractController extends Controller
         $discussion_status = $discussion->getResolved($id);
         $companyName       = $this->contract->getCompanyNames();
         $view              = 'contract.edit';
-        $code              = $request->route()->getParameter('lang');
+        $locale            = $request->route()->getParameter('lang');
 
-        if (!is_null($code)) {
-            if (!$lang->isValidTranslationLang($code) || $code == $lang->defaultLang()) {
+        if (!is_null($locale)) {
+            if (!$lang->isValidTranslationLang($locale) || $locale == $lang->defaultLang()) {
                 abort(404);
             }
-            $contract->setLang($code);
+            $contract->setLang($locale);
             $view = 'contract.edit_trans';
         }
 
@@ -241,7 +243,8 @@ class ContractController extends Controller
                 'contracts',
                 'discussions',
                 'discussion_status',
-                'companyName'
+                'companyName',
+                'locale'
             )
         );
     }
