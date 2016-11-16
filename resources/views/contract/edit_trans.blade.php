@@ -1,12 +1,11 @@
 @extends('layout.app')
 
 @section('content')
+	@include('contract.partials.form.language', ['view'=>'edit'])
+
 	<div class="panel panel-default">
 		<div class="panel-heading"> Editing
 			<span>{{$contract->metadata->contract_name or $contract->metadata->project_title}}</span></div>
-
-		@include('contract.partials.form.language', ['view'=>'edit'])
-
 		<div class="panel-body contract-wrapper">
 			@if (count($errors) > 0)
 				<div class="alert alert-danger">
@@ -43,13 +42,10 @@
 
 			$('.add-new-btn').hide();
 			$.each(arr, function (index, value) {
-				$(value).parent().parent().css({
-					'background': '#EAEAEA',
-					'padding-top': '10px',
-					'padding-bottom': '10px'
-				});
+				$(value).parent().parent().addClass("form-group-disabled");
 				$(value).prop('disabled', true);
 			});
 		});
+
 	</script>
 @stop
