@@ -119,7 +119,13 @@ if (!empty($contract->metadata->government_entity)) {
     <label for="country" class="col-sm-2 control-label">@lang('contract.country') <span class="red">*</span></label>
 
     <div class="col-sm-7">
-        <?php $country_list = ['' => trans('global.select')] + $country;?>
+        <?php
+            foreach($country as $k => $cn)
+                {
+					$country[$k] = trans('codelist/country.'.$k, [],null,$locale);
+                }
+
+        $country_list = ['' => trans('global.select')] + $country;?>
         {!! Form::select('country', $country_list ,
         isset($contract->metadata->country->code)?$contract->metadata->country->code:null, ["class"=>"required
         form-control" , "id" => "country"])!!}
@@ -131,12 +137,6 @@ if (!empty($contract->metadata->government_entity)) {
 </div>
 <?php
 $resourceList = trans('codelist/resource',[],null,$locale);
-if (isset($contract->metadata->resource)) {
-    $diff = array_diff($contract->metadata->resource, $resourceList);
-    foreach ($diff as $resource) {
-        $resourceList[$resource] = $resource;
-    }
-}
 ?>
 <div class="form-group">
     <label for="resource" class="col-sm-2 control-label">@lang('contract.resource') <span class="red">*</span></label>

@@ -149,7 +149,7 @@ class ElasticSearchService
                 $this->postText($id, false);
             }
         } catch (Exception $e) {
-            $this->logger->error($e->getMessage());
+            $this->logger->error($e->getMessage(), (array) $e);
         }
     }
 
