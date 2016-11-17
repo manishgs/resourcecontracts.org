@@ -1208,6 +1208,24 @@ input[type="radio"]{
     margin: 0 10px 0 0;
 }
 
+.index-lang .lang-choose-section p{
+    text-indent: -999px;
+    width: 35px;
+    height: 23px;
+    background: url(../images/ic_translate.svg) 0 0 no-repeat;
+    overflow: hidden;
+    margin: 0 0px 0 0;
+}
+
+.index-lang .lang-link{
+    color: #333;
+}
+
+.table-contract .glyphicon{
+    font-size: 18px;
+    color: #000;
+}
+
 .lang-choose-section a{
     padding: 12px 8px 9px;
     border-bottom: solid 3px transparent;

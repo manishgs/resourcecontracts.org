@@ -2,9 +2,7 @@
 
 	<div class="row clearfix">
 		<div class="col-md-8 lang-choose-section">
-			@if(!isset($page) || $page != 'index')
-				<p>Contract information translations:</p>
-			@endif
+			<p>Contract information translations:</p>
 
 			<span>
 				@foreach($lang->translation_lang() as $l)
