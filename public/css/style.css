@@ -1210,20 +1210,20 @@ input[type="radio"]{
 
 .index-lang .lang-choose-section p{
     text-indent: -999px;
-    width: 35px;
-    height: 23px;
+    width: 27px;
+    height: 21px;
     background: url(../images/ic_translate.svg) 0 0 no-repeat;
     overflow: hidden;
     margin: 0 0px 0 0;
+    vertical-align: middle;
+}
+
+.index-lang .lang-choose-section p ~ span{
+    vertical-align: middle;
 }
 
 .index-lang .lang-link{
     color: #333;
-}
-
-.table-contract .glyphicon{
-    font-size: 18px;
-    color: #000;
 }
 
 .lang-choose-section a{
