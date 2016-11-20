@@ -71,8 +71,8 @@ class BulkdownloadText extends Command
 
 
         $this->extractAllText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path);
-        $this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path, "rc");
-        $this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path, "olc");
+        //$this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path, "rc");
+        //$this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path, "olc");
 
     }
 
@@ -97,7 +97,7 @@ class BulkdownloadText extends Command
         chmod($path . '/extract.sh', 0777);
         echo shell_exec("./extract.sh $host $port $user $database $storagepath $password $alltext $filename $rawText $refinedText");
         $this->info("File zipped");
-        $this->uploadZipFile($storagepath, $filename, $alltext);
+        //$this->uploadZipFile($storagepath, $filename, $alltext);
 
 
     }

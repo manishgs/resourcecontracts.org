@@ -10,9 +10,9 @@ for con in $(echo "$(psql -X -d $4 -U $3 -h $1 -p $2 -t -c "SELECT id,metadata->
     contractid=$(echo $con|awk '{print $1}')
     ocid=$(echo $con|awk '{print $3}')
     psql -X -d $4 -U $3 -h $1 -p $2 -t -A -F"," -c "select text from contract_pages where contract_id=${contractid}" > $5/$9/${ocid}.txt
-    sed -r 's/<br \/>//g' $5/$9/${ocid}.txt > $5/${10}/${ocid}.txt
+    sed 's/<br \/>//g' $5/$9/${ocid}.txt > $5/${10}/${ocid}.txt
 done
-zip -r -j $5/$8 $5/${10}
+zip -r $5/$8 $5/${10}
 mv $5/$8'.zip' $5/$7/
 size=$(wc -c $5/$7/$8'.zip' |awk '{print $1}')
 filename=$8-${size}'.zip'
