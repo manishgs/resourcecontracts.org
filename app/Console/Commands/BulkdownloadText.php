@@ -67,12 +67,15 @@ class BulkdownloadText extends Command
         $password    = str_replace("&", "\&", env('DB_PASSWORD'));
         $path        = __DIR__ . '/BashScript';
         $date        = date('Y_m_d');
-        $filename    = "contract_text_" . $date;
+        $filename    = $date;
 
 
-        $this->extractAllText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path);
-        //$this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path, "rc");
-        //$this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path, "olc");
+        $this->extractAllText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText,
+                              $refinedText, $path);
+        $this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText,
+                                    $refinedText, $path, "rc");
+        $this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText,
+                                    $refinedText, $path, "olc");
 
     }
 
@@ -124,7 +127,7 @@ class BulkdownloadText extends Command
         chmod($path . '/extractcategory.sh', 0777);
         echo shell_exec("./extractcategory.sh $host $port $user $database $storagepath $password $categorytext $filename $rawText $refinedText $category");
         $this->info("File zipped");
-        $this->uploadZipFile($storagepath, $filename, $categorytext, $category);
+        //$this->uploadZipFile($storagepath, $filename, $categorytext, $category);
 
     }
 
