@@ -129,6 +129,8 @@ class BulkdownloadText extends Command
                 $value
             );
         }
+        $this->uploadZipFile($storagepath);
+        $this->deleteFromLocal($path, $storagepath);
 
     }
 
@@ -257,14 +259,9 @@ class BulkdownloadText extends Command
      *
      * @param $filename
      */
-    public function uploadZipFile($storagepath, $filename, $destFolder, $category = null)
+    public function uploadZipFile($storagepath)
     {
         $s3folder = self::S3FOLDER;
-        if ($category == "rc") {
-            $s3folder = self::S3RCFOLDER;
-        } elseif ($category == "olc") {
-            $s3folder = self::S3OLCFOLDER;
-        }
 
         $client = S3Client::factory(
             [
@@ -274,13 +271,18 @@ class BulkdownloadText extends Command
             ]
         );
 
-        $client->uploadDirectory($storagepath."/".$destFolder."/", env('AWS_BUCKET'), "/".$s3folder);
+        $client->uploadDirectory($storagepath."/download/", env('AWS_BUCKET'), "/".$s3folder);
         $this->info("File uploaded in s3");
-        $this->filesystem->deleteDirectory($storagepath.'/'.self::RAWTEXT);
-        $this->filesystem->deleteDirectory($storagepath.'/'.self::REFINEDTEXT);
-        $this->filesystem->deleteDirectory($storagepath.'/'.$destFolder);
-        $this->info("File deleted from local");
+    }
 
+    public function deleteFromLocal($path, $storagepath)
+    {
+        chdir($path);
+        chmod($path.'/deleteFromLocal.sh', 0777);
+        echo shell_exec(
+            "./deleteFromLocal.sh $storagepath"
+        );
+        $this->info("File(s) Deleted");
     }
 
 
