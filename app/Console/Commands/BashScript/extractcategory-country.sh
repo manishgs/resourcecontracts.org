@@ -10,11 +10,11 @@
 #2016_11_21                                                     7
 #rawtext                                                        8
 #refinedtext                                                    9
-#rc                                                             10
+#TN                                                             10
 export PGPASSWORD=$6
 mkdir $5/$9
 IFS=$'\n'
-for con in $(echo "$(psql -X -d $4 -U $3 -h $1 -p $2 -t -c "SELECT id,metadata->>'open_contracting_id' from contracts where metadata->'category'->>0='${10}' limit 10")"|xargs -n3)
+for con in $(echo "$(psql -X -d $4 -U $3 -h $1 -p $2 -t -c "SELECT id,metadata->>'open_contracting_id' from contracts where metadata->'country'->>'code'='${10}' limit 10")"|xargs -n3)
   do
     contractid=$(echo $con|awk '{print $1}')
     ocid=$(echo $con|awk '{print $3}')

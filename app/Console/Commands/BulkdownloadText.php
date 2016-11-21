@@ -34,10 +34,10 @@ class BulkdownloadText extends Command
      */
     public $filesystem;
 
-    const RAWTEXT     = "rawtext";
+    const RAWTEXT = "rawtext";
     const REFINEDTEXT = "refinedtext";
-    const S3FOLDER    = "dumptext";
-    const S3RCFOLDER  = "rcdumptext";
+    const S3FOLDER = "dumptext";
+    const S3RCFOLDER = "rcdumptext";
     const S3OLCFOLDER = "olcdumptext";
 
     /**
@@ -65,22 +65,76 @@ class BulkdownloadText extends Command
         $rawText     = self::RAWTEXT;
         $refinedText = self::REFINEDTEXT;
         $password    = str_replace("&", "\&", env('DB_PASSWORD'));
-        $path        = __DIR__ . '/BashScript';
+        $path        = __DIR__.'/BashScript';
         $date        = date('Y_m_d');
         $filename    = $date;
+        $country     = [
+            'TN' => 'TN',
+            'GN' => 'GN',
+            'SL' => 'SL',
+        ];
 
 
-        $this->extractAllText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText,
-                              $refinedText, $path);
-        $this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText,
-                                    $refinedText, $path, "rc");
-        $this->extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText,
-                                    $refinedText, $path, "olc");
+        $this->extractAllText(
+            $host,
+            $port,
+            $user,
+            $database,
+            $password,
+            $storagepath,
+            $filename,
+            $rawText,
+            $refinedText,
+            $path
+        );
+        $this->extractCategoryText(
+            $host,
+            $port,
+            $user,
+            $database,
+            $password,
+            $storagepath,
+            $filename,
+            $rawText,
+            $refinedText,
+            $path,
+            "rc"
+        );
+        $this->extractCategoryText(
+            $host,
+            $port,
+            $user,
+            $database,
+            $password,
+            $storagepath,
+            $filename,
+            $rawText,
+            $refinedText,
+            $path,
+            "olc"
+        );
+
+        foreach ($country as $key => $value) {
+            $this->extractCategoryCountryText(
+                $host,
+                $port,
+                $user,
+                $database,
+                $password,
+                $storagepath,
+                $filename,
+                $rawText,
+                $refinedText,
+                $path,
+                $value
+            );
+        }
 
     }
 
     /**
      * Extract text file of all contracts
+     *
      * @param $host
      * @param $port
      * @param $user
@@ -92,13 +146,25 @@ class BulkdownloadText extends Command
      * @param $refinedText
      * @param $path
      */
-    public function extractAllText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path)
-    {
+    public function extractAllText(
+        $host,
+        $port,
+        $user,
+        $database,
+        $password,
+        $storagepath,
+        $filename,
+        $rawText,
+        $refinedText,
+        $path
+    ) {
         $alltext = "alltext";
 
         chdir($path);
-        chmod($path . '/extract.sh', 0777);
-        echo shell_exec("./extract.sh $host $port $user $database $storagepath $password $alltext $filename $rawText $refinedText");
+        chmod($path.'/extract.sh', 0777);
+        echo shell_exec(
+            "./extract.sh $host $port $user $database $storagepath $password $alltext $filename $rawText $refinedText"
+        );
         $this->info("File zipped");
         //$this->uploadZipFile($storagepath, $filename, $alltext);
 
@@ -107,6 +173,7 @@ class BulkdownloadText extends Command
 
     /**
      * Extract text file of rc and olc
+     *
      * @param $host
      * @param $port
      * @param $user
@@ -119,13 +186,66 @@ class BulkdownloadText extends Command
      * @param $path
      * @param $category
      */
-    public function extractCategoryText($host, $port, $user, $database, $password, $storagepath, $filename, $rawText, $refinedText, $path, $category)
-    {
+    public function extractCategoryText(
+        $host,
+        $port,
+        $user,
+        $database,
+        $password,
+        $storagepath,
+        $filename,
+        $rawText,
+        $refinedText,
+        $path,
+        $category
+    ) {
 
         $categorytext = "categorytext";
         chdir($path);
-        chmod($path . '/extractcategory.sh', 0777);
-        echo shell_exec("./extractcategory.sh $host $port $user $database $storagepath $password $categorytext $filename $rawText $refinedText $category");
+        chmod($path.'/extractcategory.sh', 0777);
+        echo shell_exec(
+            "./extractcategory.sh $host $port $user $database $storagepath $password $categorytext $filename $rawText $refinedText $category"
+        );
+        $this->info("File zipped");
+        //$this->uploadZipFile($storagepath, $filename, $categorytext, $category);
+
+    }
+
+    /**
+     * Extract text file of country
+     *
+     * @param $host
+     * @param $port
+     * @param $user
+     * @param $database
+     * @param $password
+     * @param $storagepath
+     * @param $filename
+     * @param $rawText
+     * @param $refinedText
+     * @param $path
+     * @param $category
+     */
+    public function extractCategoryCountryText(
+        $host,
+        $port,
+        $user,
+        $database,
+        $password,
+        $storagepath,
+        $filename,
+        $rawText,
+        $refinedText,
+        $path,
+        $category
+    ) {
+
+        $categorytext = "categorytext";
+        chdir($path);
+        chmod($path.'/extractcategory-country.sh', 0777);
+        echo shell_exec(
+            "./extractcategory-country.sh $host $port $user $database $storagepath $password $categorytext $filename $rawText $refinedText $category"
+        );
         $this->info("File zipped");
         //$this->uploadZipFile($storagepath, $filename, $categorytext, $category);
 
@@ -134,6 +254,7 @@ class BulkdownloadText extends Command
 
     /**
      * Upload file in s3
+     *
      * @param $filename
      */
     public function uploadZipFile($storagepath, $filename, $destFolder, $category = null)
@@ -153,11 +274,11 @@ class BulkdownloadText extends Command
             ]
         );
 
-        $client->uploadDirectory($storagepath . "/" . $destFolder . "/", env('AWS_BUCKET'), "/" . $s3folder);
+        $client->uploadDirectory($storagepath."/".$destFolder."/", env('AWS_BUCKET'), "/".$s3folder);
         $this->info("File uploaded in s3");
-        $this->filesystem->deleteDirectory($storagepath . '/' . self::RAWTEXT);
-        $this->filesystem->deleteDirectory($storagepath . '/' . self::REFINEDTEXT);
-        $this->filesystem->deleteDirectory($storagepath . '/' . $destFolder);
+        $this->filesystem->deleteDirectory($storagepath.'/'.self::RAWTEXT);
+        $this->filesystem->deleteDirectory($storagepath.'/'.self::REFINEDTEXT);
+        $this->filesystem->deleteDirectory($storagepath.'/'.$destFolder);
         $this->info("File deleted from local");
 
     }
