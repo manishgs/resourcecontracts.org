@@ -168,7 +168,6 @@ class BulkdownloadText extends Command
             "./extract.sh $host $port $user $database $storagepath $password $alltext $filename $rawText $refinedText"
         );
         $this->info("File zipped");
-        //$this->uploadZipFile($storagepath, $filename, $alltext);
 
 
     }
@@ -209,7 +208,6 @@ class BulkdownloadText extends Command
             "./extractcategory.sh $host $port $user $database $storagepath $password $categorytext $filename $rawText $refinedText $category"
         );
         $this->info("File zipped");
-        //$this->uploadZipFile($storagepath, $filename, $categorytext, $category);
 
     }
 
@@ -249,7 +247,6 @@ class BulkdownloadText extends Command
             "./extractcategory-country.sh $host $port $user $database $storagepath $password $categorytext $filename $rawText $refinedText $category"
         );
         $this->info("File zipped");
-        //$this->uploadZipFile($storagepath, $filename, $categorytext, $category);
 
     }
 
